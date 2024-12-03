@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,12 +46,34 @@ namespace WpfApp5
 
         private void OpenCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            OpenFileDialog OpenFileDialog = new OpenFileDialog();
+            OpenFileDialog.Filter = "Rich Text Format (*.rtf)|*.rtf|All files (*.*)|*.*";
+            OpenFileDialog.DefaultExt = ".rtf";
+            OpenFileDialog.AddExtension = true;
 
+            if (OpenFileDialog.ShowDialog() == true)
+            {
+                FileStream fileStream = new FileStream(OpenFileDialog.FileName, FileMode.Open);
+                TextRange range = new TextRange(rtbEditer.Document.ContentStart, rtbEditer.Document.ContentEnd);
+                range.Load(fileStream, DataFormats.Rtf);
+                fileStream.Close();
+            }
         }
 
         private void SaveCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Rich Text Format (*.rtf)|*.rtf|All files (*.*)|*.*";
+            saveFileDialog.DefaultExt = ".rtf";
+            saveFileDialog.AddExtension = true;
 
+            if (saveFileDialog.ShowDialog() == true) 
+            {
+                FileStream fileStream = new FileStream(saveFileDialog.FileName, FileMode.Create);
+                TextRange range = new TextRange(rtbEditer.Document.ContentStart, rtbEditer.Document.ContentEnd);
+                range.Save(fileStream, DataFormats.Rtf);
+                fileStream.Close();
+            }
         }
 
         private void fontColorPicker_SelectedColorChanged(object sender, RoutedPropertyChangedEventArgs<Color?> e)
@@ -99,6 +123,11 @@ namespace WpfApp5
 
             var property_fontColor = rtbEditer.Selection.GetPropertyValue(TextElement.ForegroundProperty);
                 fontColorPicker.SelectedColor = ((SolidColorBrush)property_fontColor).Color;
+        }
+
+        private void trashButton_Click(object sender, RoutedEventArgs e)
+        {
+            rtbEditer.Document.Blocks.Clear();
         }
     }
 }
