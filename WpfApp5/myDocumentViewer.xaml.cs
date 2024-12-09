@@ -121,8 +121,17 @@ namespace WpfApp5
             fontSizeComboBox.SelectedItem = property_fontSize;
             
 
+            //var property_fontColor = rtbEditer.Selection.GetPropertyValue(TextElement.ForegroundProperty);
+            //    fontColorPicker.SelectedColor = ((SolidColorBrush)property_fontColor).Color;
             var property_fontColor = rtbEditer.Selection.GetPropertyValue(TextElement.ForegroundProperty);
-                fontColorPicker.SelectedColor = ((SolidColorBrush)property_fontColor).Color;
+            if (property_fontColor != DependencyProperty.UnsetValue && property_fontColor is SolidColorBrush solidColorBrush)
+            {
+                fontColorPicker.SelectedColor = solidColorBrush.Color;
+            }
+            else
+            {
+                fontColorPicker.SelectedColor = Colors.Transparent; // or any default color
+            }
         }
 
         private void trashButton_Click(object sender, RoutedEventArgs e)
